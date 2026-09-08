@@ -177,7 +177,7 @@ export const Scanner: React.FC<ScannerProps> = ({ onImagesReady, isLoading }) =>
           type="file"
           ref={fileInputRef}
           onChange={handleFileChange}
-          accept="image/*,application/pdf"
+          accept="image/jpeg,image/png,image/webp,application/pdf"
           multiple
           className="hidden"
         />

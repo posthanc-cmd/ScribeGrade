@@ -57,15 +57,23 @@ async function startServer() {
 
       const promptText = `You are a strict, highly experienced science teacher grading a student's science workbook (provided as images or a PDF).
       
-CRITICAL INSTRUCTIONS FOR GRADING (SPEED OPTIMIZED):
-1. EXTRACT AND GRADE: For EVERY question where the student has provided an answer, extract it and grade it (0-10) against standard expected curriculum.
+CRITICAL INSTRUCTIONS FOR GRADING (SPEED OPTIMIZED & DETERMINISTIC):
+1. EXTRACT AND GRADE: For EVERY question where the student has provided an answer, extract it and grade it (6.0-10.0) against standard expected curriculum.
 2. BE EXTREMELY CONCISE: To minimize latency, keep 'feedback' very short (1 sentence max).
 3. SKIP REWRITES FOR HIGH SCORES: Only provide a 'rewrittenAnswer' if the score is below 8.0. Otherwise, leave it completely empty.
+4. BE DETERMINISTIC: You must be highly consistent. If given the same answer, always give the exact same score.
+
+STRICT GRADING RUBRIC (6.0 to 10.0):
+- 10.0: Perfect. Factual, complete, and conceptually flawless.
+- 9.0 - 9.5: Good. Minor details missing but conceptually correct.
+- 8.0 - 8.5: Partial. Mentions some correct keywords but explanation is flawed or incomplete.
+- 7.0 - 7.5: Incorrect. Fundamentally misunderstands the science concept.
+- 6.0: Blank, completely irrelevant, or illegible. (Lowest possible score).
 
 Grading Rules:
-- Provide an overall score between 0.0 and 10.0.
-- For each section, assign a score out of 10.
-- Language of the output report MUST BE in ${langName}.`;
+- Provide an overall score between 6.0 and 10.0.
+- For each section, assign a score between 6.0 and 10.0 based EXACTLY on the rubric above.
+- Language of the output report MUST BE in \${langName}.`;
 
       parts.push({ text: promptText });
 
@@ -80,7 +88,7 @@ Grading Rules:
             contents: { parts },
             config: {
               maxOutputTokens: 8192,
-              temperature: 0.2,
+              temperature: 0.0,
               responseMimeType: "application/json",
               responseSchema: {
                 type: Type.OBJECT,

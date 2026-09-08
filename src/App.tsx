@@ -73,7 +73,7 @@ export default function App() {
     setProgressInfo('Preparing images for grading...');
     
     try {
-      const BATCH_SIZE = 5;
+      const BATCH_SIZE = 2;
       const chunks = [];
       for (let i = 0; i < images.length; i += BATCH_SIZE) {
         chunks.push(images.slice(i, i + BATCH_SIZE));
@@ -101,10 +101,18 @@ export default function App() {
           body: JSON.stringify({ images: chunk, language }),
         });
         
-        const data = await response.json();
+        const isJson = response.headers.get('content-type')?.includes('application/json');
+        let data;
+        
+        if (isJson) {
+          data = await response.json();
+        } else {
+          const textError = await response.text();
+          throw new Error(response.status === 504 || response.status === 502 ? "The server timed out while grading. Please try uploading fewer pages at a time." : "Received an invalid response from the server.");
+        }
         
         if (!response.ok) {
-          throw new Error(data.error || `Failed to grade batch ${i + 1}`);
+          throw new Error(data?.error || `Failed to grade batch ${i + 1}`);
         }
 
         if (data.sections && Array.isArray(data.sections)) {
