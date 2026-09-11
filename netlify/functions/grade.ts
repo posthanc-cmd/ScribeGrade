@@ -149,7 +149,12 @@ Grading Rules:
       throw new Error('No response from AI');
     }
 
-    const result = JSON.parse(resultText);
+    let result;
+    try {
+      result = JSON.parse(resultText);
+    } catch (parseError) {
+      throw new Error(`AI returned invalid JSON: ${resultText.substring(0, 100)}...`);
+    }
     return {
       statusCode: 200,
       body: JSON.stringify(result)
@@ -157,7 +162,7 @@ Grading Rules:
   } catch (error: any) {
     console.error('Grading error:', error);
     
-    let errorMessage = 'An unexpected error occurred while processing the workbook. Please try again.';
+    let errorMessage = 'An unexpected error occurred while processing the workbook. Please try again. Details: ' + (error?.message || String(error));
     const rawError = error?.message || '';
     
     if (rawError.includes('503')) {

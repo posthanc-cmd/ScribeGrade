@@ -73,7 +73,9 @@ export default function App() {
     setProgressInfo('Preparing images for grading...');
     
     try {
-      const BATCH_SIZE = 2;
+      // Netlify free tier limits requests to 10 seconds.
+      // Processing 1 page at a time is the safest way to guarantee we stay under that limit.
+      const BATCH_SIZE = 1;
       const chunks = [];
       for (let i = 0; i < images.length; i += BATCH_SIZE) {
         chunks.push(images.slice(i, i + BATCH_SIZE));
@@ -140,8 +142,8 @@ export default function App() {
       setActiveView('report');
     } catch (err: any) {
       let cleanMessage = err.message || 'An unexpected error occurred';
-      if (cleanMessage.includes("Failed to fetch")) {
-        cleanMessage = "Could not connect to the server. Please check your internet connection and try again.";
+      if (cleanMessage.includes("Failed to fetch") || cleanMessage.includes("Load failed")) {
+        cleanMessage = "The connection to the server was lost (Load failed). If you are using Netlify, their strict 10-second timeout may have killed the request because the AI took too long. Try uploading fewer pages at a time.";
       } else if (cleanMessage.includes("{") || cleanMessage.includes("ApiError")) {
         cleanMessage = "An unexpected error occurred while processing the workbook. Please try again. Details: " + cleanMessage;
       }
