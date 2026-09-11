@@ -202,6 +202,17 @@ Grading Rules:
     });
   }
 
+  // Global error handler to catch body-parser errors (like Payload Too Large)
+  // and ensure they are returned as JSON instead of HTML.
+  app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+    console.error("Express Middleware Error:", err);
+    if (err.type === 'entity.too.large') {
+      res.status(413).json({ error: "The uploaded files are too large. Please try uploading fewer pages at a time." });
+    } else {
+      res.status(500).json({ error: err.message || "Internal server error" });
+    }
+  });
+
   app.listen(PORT, "0.0.0.0", () => {
     console.log("Server running on port " + PORT);
   });

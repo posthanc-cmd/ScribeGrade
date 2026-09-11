@@ -108,7 +108,8 @@ export default function App() {
           data = await response.json();
         } else {
           const textError = await response.text();
-          throw new Error(response.status === 504 || response.status === 502 ? "The server timed out while grading. Please try uploading fewer pages at a time." : "Received an invalid response from the server.");
+          const previewText = textError.substring(0, 100).replace(/\n/g, ' ');
+          throw new Error(response.status === 504 || response.status === 502 ? "The server timed out while grading. Please try uploading fewer pages at a time." : `Received an invalid response from the server (Status: ${response.status}). Details: ${previewText}`);
         }
         
         if (!response.ok) {
