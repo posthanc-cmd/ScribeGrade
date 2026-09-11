@@ -144,7 +144,7 @@ export default function App() {
       if (cleanMessage.includes("Failed to fetch")) {
         cleanMessage = "Could not connect to the server. Please check your internet connection and try again.";
       } else if (cleanMessage.includes("{") || cleanMessage.includes("ApiError")) {
-        cleanMessage = "An unexpected error occurred while processing the workbook. Please try again.";
+        cleanMessage = "An unexpected error occurred while processing the workbook. Please try again. Details: " + cleanMessage;
       }
       setError(cleanMessage);
     } finally {

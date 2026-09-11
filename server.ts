@@ -169,7 +169,7 @@ Grading Rules:
     } catch (error: any) {
       console.error("Grading error:", error);
       
-      let errorMessage = "An unexpected error occurred while processing the workbook. Please try again.";
+      let errorMessage = "An unexpected error occurred while processing the workbook. Please try again. Details: " + (error?.message || String(error));
       const rawError = error?.message || "";
       
       // Parse specific Google API errors if possible to make them friendlier
