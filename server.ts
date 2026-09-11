@@ -164,7 +164,12 @@ Grading Rules:
         throw new Error("No response from AI");
       }
 
-      const result = JSON.parse(resultText);
+      let result;
+      try {
+        result = JSON.parse(resultText);
+      } catch (parseError) {
+        throw new Error(`AI returned invalid JSON: ${resultText.substring(0, 100)}...`);
+      }
       res.json(result);
     } catch (error: any) {
       console.error("Grading error:", error);

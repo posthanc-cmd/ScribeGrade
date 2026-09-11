@@ -101,14 +101,13 @@ export default function App() {
           body: JSON.stringify({ images: chunk, language }),
         });
         
-        const isJson = response.headers.get('content-type')?.includes('application/json');
+        const textResponse = await response.text();
         let data;
         
-        if (isJson) {
-          data = await response.json();
-        } else {
-          const textError = await response.text();
-          const previewText = textError.substring(0, 100).replace(/\n/g, ' ');
+        try {
+          data = JSON.parse(textResponse);
+        } catch (e) {
+          const previewText = textResponse.substring(0, 100).replace(/\n/g, ' ');
           throw new Error(response.status === 504 || response.status === 502 ? "The server timed out while grading. Please try uploading fewer pages at a time." : `Received an invalid response from the server (Status: ${response.status}). Details: ${previewText}`);
         }
         
